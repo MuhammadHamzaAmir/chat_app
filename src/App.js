@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import React, { useState } from "react";
 import './App.css';
-import {Usercreds,Logingoogle} from "./backend.js";
+import {Userlogin,Logingoogle} from "./backend.js";
 
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
     <div className="App">
         <h1>HERE</h1>
         {/* <button onClick={Logingoogle}>Login with google</button> */}
-        <Usercreds></Usercreds>
+        <Userlogin></Userlogin>
 
         
     </div>

@@ -83,7 +83,7 @@ signInWithPopup(auth, provider)
 
 }
 
-export function Usercreds(){
+export function Userlogin(){
     
     let [name, setName] = useState("User Name: ");
     let [mail ,setMail] = useState("User Mail: ")
@@ -95,12 +95,14 @@ export function Usercreds(){
 
     return ( 
         <div> 
-            <button onClick={() => { Logingoogle(); setTimeout(()=> {userdetail()},6000);}}>Login with Google</button>
-            <br/>
-            <span>{mail}</span>
+            <button onClick={() => { Logingoogle(); setTimeout(()=> {userdetail()},15000);}}>Login with Google</button>
             <br/>
             <span>{name}</span>
+            <br />
+            <span>{mail}</span>
         </div>
     );
 }
+
+
 
