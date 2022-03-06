@@ -1,9 +1,9 @@
 import logo from './logo.svg';
 import React, { useState } from "react";
 import './App.css';
-import {Userlogin,Logingoogle} from "./backend.js";
-
-
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./components/Login.js"
+import Dashboard from "./components/Dashboard.js"
 function App() {
 
     // let [mail,setMail] = useState("User");
@@ -11,11 +11,12 @@ function App() {
 
   return (
     <div className="App">
-        <h1>HERE</h1>
-        {/* <button onClick={Logingoogle}>Login with google</button> */}
-        <Userlogin></Userlogin>
-
-        
+      <Router>
+        <Routes>
+          <Route exact path="/" element={<Login />} />
+          <Route exact path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
