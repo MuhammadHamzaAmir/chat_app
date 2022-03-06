@@ -2,7 +2,15 @@
 import { initializeApp } from "firebase/app";
 import React, { useState } from "react";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider,
+signInWithEmailAndPassword, 
+createUserWithEmailAndPassword,sendPasswordResetEmail,signOut } from "firebase/auth";
+import {
+  getFirestore,query,getDocs,collection,
+where,
+addDoc,
+ } from "firebase/firestore";
+
 var admin = require("firebase-admin");
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -27,6 +35,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
 //console.log(provider.getScopes());
 
 const present_user = getAuth().currentUser;
@@ -39,38 +48,59 @@ else{
     
     console.log("user not signed");
 }
-export function Logingoogle(){
+
 
 
 const auth = getAuth();
 
-signInWithPopup(auth, provider)
-  .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    console.log(token);
-    // The signed-in user info.
-    const user = result.user;
-    userMail = user.email;
-    userName = user.displayName;
-    console.log(user.displayName);
-    console.log(user.email);
-    console.log(user.getIdToken());
 
-    // ...
-  })
-  .catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.email;
-    console.log(email);
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
+const signInWithGoogle = async () => {
+    await signInWithPopup(auth, provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      // console.log(token);
+      // The signed-in user info.
+      const user = result.user;
+      const q = query(collection(db, "users"), where("uid", "==", user.uid));
+      userMail = user.email;
+      userName = user.displayName;
+      const docs = getDocs(q);
+      if (docs.docs.length === 0) {
+        addDoc(collection(db, "users"), {
+          uid: user.uid,
+          name: user.displayName,
+          authProvider: "google",
+          email: user.email,
+        });
+      }
+      // console.log(user.displayName);
+      // console.log(user.email);
+      // console.log(user.getIdToken());
+
+      // ...
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      
+      // console.log(email);
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      alert(error);
+      // ...
+    });
+
+};
+
+const logout = () => {
+  signOut(auth);
+};
+
 
 //   return (
 //     <div>
@@ -81,28 +111,13 @@ signInWithPopup(auth, provider)
 //   );
 
 
-}
 
-export function Userlogin(){
-    
-    let [name, setName] = useState("User Name: ");
-    let [mail ,setMail] = useState("User Mail: ")
 
-    const userdetail = () => {
-        setName("User Name: "+userName);
-        setMail("User Mail: "+userMail);
-    }
-
-    return ( 
-        <div> 
-            <button onClick={() => { Logingoogle(); setTimeout(()=> {userdetail()},15000);}}>Login with Google</button>
-            <br/>
-            <span>{name}</span>
-            <br />
-            <span>{mail}</span>
-        </div>
-    );
-}
-
+export {
+  auth,
+  db,
+  signInWithGoogle,
+  logout,
+};
 
 
